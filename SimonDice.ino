@@ -3,6 +3,8 @@
 #define NOTE_G6  1568
 #define NOTE_B6  1976
 
+#define NOTE_B0  31
+
 #define melodyPin 3
 
 #define led1 7
@@ -19,6 +21,12 @@ int sensorPin1 = A1;
 int sensorValue = 0;
 int sensorValue1 = 0;
 
+boolean juego = false;
+int indice = 0;
+int nivel = 0;
+int secuencia[80];
+int jugador[80];
+
 void setup() {
   Serial.begin(9600);
   pinMode(melodyPin,OUTPUT);
@@ -30,47 +38,101 @@ void setup() {
   pinMode(led4,OUTPUT);
   
   Serial.println("Iniciado");
-  iniciar();
+  generarSecuencia();
 }
 
 void loop() {
-  sensorValue = analogRead(sensorPin);
-  sensorValue1 = analogRead(sensorPin1);
 
-  int boton = 5;
+  if(juego) {
 
-  if(sensorValue >= 500 && sensorValue <=710) {
-    Serial.print(sensorValue);
-    Serial.println(" boton 1");
-    boton = 0;   
-  } else if(sensorValue > 710 && sensorValue <=1000) {
-    Serial.print(sensorValue);
-    Serial.println(" boton 2");    
-    boton = 1;
-  }
-
-  if(sensorValue1 >= 500 && sensorValue1 <=710) {
-    Serial.print(sensorValue1);
-    Serial.println(" boton 3");
-    boton = 2;
-  } else if(sensorValue1 > 710 && sensorValue1 <=1000) {
-    Serial.print(sensorValue1);
-    Serial.println(" boton 4");    
-    boton = 3;
-  }
-
-  if(boton < 4) {
-    tocarNota(boton);
-  }
+    sensorValue = analogRead(sensorPin);
+    sensorValue1 = analogRead(sensorPin1);
   
+    int boton = 5;
+  
+    if(sensorValue >= 500 && sensorValue <=710) {
+      boton = 0;   
+    } else if(sensorValue > 710 && sensorValue <=1000) {
+      boton = 1;
+    }
+  
+    if(sensorValue1 >= 500 && sensorValue1 <=710) {
+      boton = 2;
+    } else if(sensorValue1 > 710 && sensorValue1 <=1000) {
+      boton = 3;
+    }
+  
+    if(boton < 4) {
+      jugador[indice] = boton;
+      tocarNota(boton);
+    
+      if(jugador[indice] == secuencia[indice]) {
+          Serial.println("Nota igual a secuencia");
+          indice++;
+          if(indice < nivel) {
+            Serial.println("Espera la siguiente nota");
+          } else {
+            Serial.println("completo nivel");
+            nivel++;
+            juego = false;
+          }
+        } else {
+          Serial.println("game over");
+          gameOver();
+          generarSecuencia();
+        }
+    }
+
+  
+  } else {
+
+    if(nivel > 0) {
+      Serial.println("Reproduce melodia");
+      for (int i = 0; i < nivel; i = i + 1) {
+        Serial.print(secuencia[i]);
+        Serial.print(" ");
+        jugador[i] = -1;
+        tocarNota(secuencia[i]);
+      }
+      Serial.println(" ");
+    } else {
+      tocarNota(0);
+      Serial.println("Reproduce melodia");
+      //generarSecuencia();
+    }
+    juego = true;
+    indice = 0;
+    
+    
+  }
   delay(200);
+  
 }
 
-void apagar() {
-  digitalWrite(led1, LOW);
-  digitalWrite(led2, LOW);
-  digitalWrite(led3, LOW);
-  digitalWrite(led4, LOW);
+
+void generarSecuencia() {
+    Serial.println("Genera secuencia");
+    for (int i = 0; i < 80; i = i + 1) {
+      secuencia[i] = random(0,3);
+      jugador[i] = -1;
+    }
+    juego = false;
+    indice = 0;
+    nivel = 0;    
+}
+
+void gameOver() {
+      int noteDuration = 1000 / 2;
+
+      buzz(melodyPin,NOTE_B0, noteDuration,0);
+
+      // to distinguish the notes, set a minimum time between them.
+      // the note's duration + 30% seems to work well:
+      int pauseBetweenNotes = noteDuration * 1.30;
+      delay(pauseBetweenNotes);
+
+      // stop the tone playing:
+      buzz(melodyPin, 0, noteDuration,0);    
 }
 
 void tocarNota(int thisNote) {
@@ -78,7 +140,7 @@ void tocarNota(int thisNote) {
       // divided by the note type.
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       //int noteDuration = 1000 / tempo[thisNote];
-      int noteDuration = 1000 / 12;
+      int noteDuration = 1000 / 4;
 
       buzz(melodyPin, melody[thisNote], noteDuration,thisNote);
 
@@ -115,6 +177,4 @@ void buzz(int targetPin, long frequency, long length,int thisNote) {
     digitalWrite(targetPin, LOW); // write the buzzer pin low to pull back the diaphram
     delayMicroseconds(delayValue); // wait again or the calculated delay value
   }
-  
-
 }
