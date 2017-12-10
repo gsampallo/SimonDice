@@ -18,4 +18,4 @@ Los componentes utilizados son:
 ![alt text](https://raw.githubusercontent.com/gsampallo/SimonDice/master/simon_esquematico.png "Esquematico")
 
 
-[![youtube](https://i.ytimg.com/vi/4VTZrfXP-ds/hqdefault.jpg)](https://www.youtube.com/watch?v=8vIbTG9BvlI]
+Video explicativo: https://youtu.be/8vIbTG9BvlI
