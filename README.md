@@ -6,8 +6,8 @@ Los componentes utilizados son:
 - Arduino Nano
 - 4 led
 - 4 resistencias 1k para los led
-- 2 resistencias 100k
-- 2 resistencias para los botones, no importa cuales siempre que sean diferentes entre si y menores a 100k
+- 4 resistencias 10k
+- 1 resistencia de 1k para el input
 - 1 speaker
 - cables
 - protoboard
@@ -18,5 +18,4 @@ Los componentes utilizados son:
 ![alt text](https://raw.githubusercontent.com/gsampallo/SimonDice/master/simon_esquematico.png "Esquematico")
 
 
-[![IMAGE ALT TEXT HERE](https://i.ytimg.com/vi/4VTZrfXP-ds/hqdefault.jpg)](https://www.youtube.com/watch?v=4VTZrfXP-ds)
-
+[![youtube](https://i.ytimg.com/vi/4VTZrfXP-ds/hqdefault.jpg)](https://www.youtube.com/watch?v=8vIbTG9BvlI]

@@ -12,14 +12,12 @@
 #define led3 5
 #define led4 4
 
-//Mario main theme melody
 int melody[] = { NOTE_E7, NOTE_C7, NOTE_G6, NOTE_B6 };
 
 int sensorPin = A0;
-int sensorPin1 = A1;
+
 
 int sensorValue = 0;
-int sensorValue1 = 0;
 
 boolean juego = false;
 int indice = 0;
@@ -46,19 +44,18 @@ void loop() {
   if(juego) {
 
     sensorValue = analogRead(sensorPin);
-    sensorValue1 = analogRead(sensorPin1);
   
     int boton = 5;
   
-    if(sensorValue >= 500 && sensorValue <=710) {
+    if(sensorValue >= 10 && sensorValue <=24) {
       boton = 0;   
-    } else if(sensorValue > 710 && sensorValue <=1000) {
+    } else if(sensorValue > 25 && sensorValue <=41) {
       boton = 1;
     }
   
-    if(sensorValue1 >= 500 && sensorValue1 <=710) {
+    if(sensorValue >= 42 && sensorValue <=55) {
       boton = 2;
-    } else if(sensorValue1 > 710 && sensorValue1 <=1000) {
+    } else if(sensorValue > 70 && sensorValue <=100) {
       boton = 3;
     }
   
@@ -109,7 +106,9 @@ void loop() {
   
 }
 
-
+/*
+ * Genera un secuancia aleatoria, donde tiene un maximo de 80 items en la secuencia.
+ */
 void generarSecuencia() {
     Serial.println("Genera secuencia");
     for (int i = 0; i < 80; i = i + 1) {
@@ -125,33 +124,22 @@ void gameOver() {
       int noteDuration = 1000 / 2;
 
       buzz(melodyPin,NOTE_B0, noteDuration,0);
-
-      // to distinguish the notes, set a minimum time between them.
-      // the note's duration + 30% seems to work well:
       int pauseBetweenNotes = noteDuration * 1.30;
       delay(pauseBetweenNotes);
 
-      // stop the tone playing:
       buzz(melodyPin, 0, noteDuration,0);    
 }
 
+
 void tocarNota(int thisNote) {
-      // to calculate the note duration, take one second
-      // divided by the note type.
-      //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
-      //int noteDuration = 1000 / tempo[thisNote];
       int noteDuration = 1000 / 4;
 
       buzz(melodyPin, melody[thisNote], noteDuration,thisNote);
-
-      // to distinguish the notes, set a minimum time between them.
-      // the note's duration + 30% seems to work well:
       int pauseBetweenNotes = noteDuration * 1.30;
       delay(pauseBetweenNotes);
-
-      // stop the tone playing:
       buzz(melodyPin, 0, noteDuration,thisNote);    
 }
+
 
 void iniciar() {
   int size = sizeof(melody) / sizeof(int);
@@ -164,11 +152,7 @@ void iniciar() {
 void buzz(int targetPin, long frequency, long length,int thisNote) {
   
   long delayValue = 1000000 / frequency / 2; // calculate the delay value between transitions
-  //// 1 second's worth of microseconds, divided by the frequency, then split in half since
-  //// there are two phases to each cycle
   long numCycles = frequency * length / 1000; // calculate the number of cycles for proper timing
-  //// multiply frequency, which is really cycles per second, by the number of seconds to
-  //// get the total number of cycles to produce
   for (long i = 0; i < numCycles; i++) { // for the calculated length of time...
     digitalWrite((7-thisNote), HIGH);
     digitalWrite(targetPin, HIGH); // write the buzzer pin high to push out the diaphram
